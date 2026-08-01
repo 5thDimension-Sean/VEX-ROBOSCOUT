@@ -1,27 +1,35 @@
 /**
  * App configuration for the VEX (VRC) app.
  *
- * Uses the RobotEvents API (Bearer token). Get a token at
- * https://www.robotevents.com/api/v2 (Account → API). Set it in a local
- * `.env` (git-ignored):
+ * Uses the Public VEX Events API (https://events.vex.com/api/v2), which is
+ * VEX's own platform following the 2026 VEX/RECF split. Auth is a Bearer JWT.
  *
- *   EXPO_PUBLIC_VEX_API_TOKEN=your-bearer-token
- *   EXPO_PUBLIC_VEX_SEASON_ID=190      # optional; else the current VRC season
+ * Set these in a local `.env` (git-ignored):
+ *
+ *   EXPO_PUBLIC_VEX_API_TOKEN=your-bearer-jwt
+ *   EXPO_PUBLIC_VEX_PROGRAM_ID=1     # optional; V5RC (formerly VRC). See below.
+ *   EXPO_PUBLIC_VEX_SEASON_ID=       # optional; else the current season is resolved
+ *
+ * Program IDs: the VEX Events API groups data by program (V5RC, VIQRC, VURC,
+ * VEX AI, …). This app defaults to program 1 (the flagship V5RC / formerly VRC).
+ * If your data comes back for the wrong program after the rebrand, set
+ * EXPO_PUBLIC_VEX_PROGRAM_ID — the Settings screen can also list programs.
  */
 
 export const VEX_API_BASE = 'https://events.vex.com/api/v2';
 
-/** RobotEvents program id for the VEX V5 Robotics Competition (VRC). */
-export const VRC_PROGRAM_ID = 1;
+/** Default program: V5RC (formerly VRC). Override via env if needed. */
+export const DEFAULT_PROGRAM_ID = 1;
 
 export const config = {
   apiBase: VEX_API_BASE,
   token: process.env.EXPO_PUBLIC_VEX_API_TOKEN ?? '',
-  /** Optional pinned season id; when empty, the client resolves the current VRC season. */
+  programId: process.env.EXPO_PUBLIC_VEX_PROGRAM_ID
+    ? Number(process.env.EXPO_PUBLIC_VEX_PROGRAM_ID)
+    : DEFAULT_PROGRAM_ID,
   seasonId: process.env.EXPO_PUBLIC_VEX_SEASON_ID
     ? Number(process.env.EXPO_PUBLIC_VEX_SEASON_ID)
     : null,
-  programId: VRC_PROGRAM_ID,
 };
 
 export const hasCredentials = (): boolean => config.token.length > 0;

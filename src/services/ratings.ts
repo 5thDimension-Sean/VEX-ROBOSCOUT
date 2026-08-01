@@ -1,5 +1,5 @@
 /**
- * TrueSkill leaderboard for VEX, computed from RobotEvents match results.
+ * TrueSkill leaderboard for VEX, computed from VEX Events match results.
  * Scope is a bounded set of events (e.g. the events your favorited teams
  * attend), since global rankings would need a backend.
  */

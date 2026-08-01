@@ -1,12 +1,12 @@
 /**
- * RobotEvents API client (VEX / VRC).
+ * VEX Events API client (events.vex.com/api/v2).
  *
  * Bearer-token auth, pagination handling, an AsyncStorage cache with TTL and
  * stale-fallback, and automatic current-season resolution.
  */
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { config, hasCredentials, VRC_PROGRAM_ID } from '../config/env';
+import { config, hasCredentials } from '../config/env';
 import type {
   Paginated,
   VexTeam,
@@ -34,7 +34,7 @@ let instance: AxiosInstance | null = null;
 function client(): AxiosInstance {
   if (!hasCredentials()) {
     throw new VexApiError(
-      'RobotEvents API token is not set. Add EXPO_PUBLIC_VEX_API_TOKEN to your .env file.',
+      'VEX Events API token is not set. Add EXPO_PUBLIC_VEX_API_TOKEN to your .env file.',
     );
   }
   if (!instance) {
@@ -86,9 +86,9 @@ function toError(err: unknown): VexApiError {
     const status = ax.response.status;
     const msg =
       status === 401
-        ? 'Authentication failed — check your RobotEvents API token.'
+        ? 'Authentication failed — check your VEX Events API token.'
         : status === 429
-          ? 'Rate limited by RobotEvents — try again shortly.'
+          ? 'Rate limited by the VEX Events API — try again shortly.'
           : status === 404
             ? 'Not found.'
             : `Request failed (${status}).`;
@@ -142,8 +142,8 @@ let cachedSeasonId: number | null = null;
 async function resolveSeasonId(): Promise<number> {
   if (config.seasonId) return config.seasonId;
   if (cachedSeasonId) return cachedSeasonId;
-  const seasons = await getAllPages<Season>('/seasons', { 'program[]': VRC_PROGRAM_ID });
-  if (seasons.length === 0) throw new VexApiError('No VRC seasons available.');
+  const seasons = await getAllPages<Season>('/seasons', { 'program[]': config.programId });
+  if (seasons.length === 0) throw new VexApiError('No seasons available for this program.');
   const now = Date.now();
   const current =
     seasons.find(
@@ -165,7 +165,7 @@ export const vexApi = {
   async getTeamByNumber(number: string, forceFresh = false): Promise<VexTeam | null> {
     const teams = await getAllPages<VexTeam>(
       '/teams',
-      { 'number[]': number, 'program[]': VRC_PROGRAM_ID },
+      { 'number[]': number, 'program[]': config.programId },
       { forceFresh },
     );
     return teams[0] ?? null;
@@ -184,7 +184,7 @@ export const vexApi = {
     const season = await resolveSeasonId();
     const q: Record<string, string | number | (string | number)[]> = {
       'season[]': season,
-      'program[]': VRC_PROGRAM_ID,
+      'program[]': config.programId,
     };
     if (params.teamId) q['team[]'] = params.teamId;
     return getAllPages<VexEvent>('/events', q, { forceFresh });

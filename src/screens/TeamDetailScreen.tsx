@@ -46,7 +46,7 @@ export function TeamDetailScreen({ route, navigation }: Props) {
           </View>
           <StarButton teamNumber={t.number} size={28} />
         </View>
-        <InfoRow icon="business-outline" label="Organization" value={t.organization} />
+        <InfoRow icon="business-outline" label="Organization" value={t.organization ?? ''} />
         <InfoRow
           icon="location-outline"
           label="Location"
@@ -55,7 +55,7 @@ export function TeamDetailScreen({ route, navigation }: Props) {
         {t.robot_name ? (
           <InfoRow icon="hardware-chip-outline" label="Robot" value={t.robot_name} />
         ) : null}
-        <InfoRow icon="school-outline" label="Grade" value={t.grade} />
+        <InfoRow icon="school-outline" label="Grade" value={t.grade ?? ''} />
       </Card>
 
       <SectionTitle>TrueSkill & World Skills</SectionTitle>
