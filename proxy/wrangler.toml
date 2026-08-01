@@ -1,0 +1,6 @@
+name = "vex-robotscout-proxy"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Secret (set with `wrangler secret put`, NOT committed here):
+#   wrangler secret put VEX_API_TOKEN

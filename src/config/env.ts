@@ -23,6 +23,7 @@ export const DEFAULT_PROGRAM_ID = 1;
 
 export const config = {
   apiBase: VEX_API_BASE,
+  proxyUrl: process.env.EXPO_PUBLIC_VEX_PROXY_URL ?? '',
   token: process.env.EXPO_PUBLIC_VEX_API_TOKEN ?? '',
   programId: process.env.EXPO_PUBLIC_VEX_PROGRAM_ID
     ? Number(process.env.EXPO_PUBLIC_VEX_PROGRAM_ID)
@@ -32,4 +33,12 @@ export const config = {
     : null,
 };
 
-export const hasCredentials = (): boolean => config.token.length > 0;
+/**
+ * True when the app should route through the proxy Worker (web deploy) instead
+ * of calling events.vex.com directly with the Bearer token. The VEX API allows
+ * CORS, so the proxy's purpose is to keep the token out of the public bundle.
+ */
+export const useProxy = (): boolean => config.proxyUrl.length > 0;
+
+export const hasCredentials = (): boolean =>
+  useProxy() || config.token.length > 0;

@@ -6,7 +6,7 @@
  */
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { config, hasCredentials } from '../config/env';
+import { config, hasCredentials, useProxy } from '../config/env';
 import type {
   Paginated,
   VexTeam,
@@ -38,14 +38,22 @@ function client(): AxiosInstance {
     );
   }
   if (!instance) {
-    instance = axios.create({
-      baseURL: config.apiBase,
-      headers: {
-        Authorization: `Bearer ${config.token}`,
-        Accept: 'application/json',
-      },
-      timeout: 15000,
-    });
+    // Proxy mode: hit the Worker (which injects the Bearer token + CORS).
+    // Direct mode: call events.vex.com with the token from env.
+    instance = useProxy()
+      ? axios.create({
+          baseURL: config.proxyUrl,
+          headers: { Accept: 'application/json' },
+          timeout: 15000,
+        })
+      : axios.create({
+          baseURL: config.apiBase,
+          headers: {
+            Authorization: `Bearer ${config.token}`,
+            Accept: 'application/json',
+          },
+          timeout: 15000,
+        });
   }
   return instance;
 }

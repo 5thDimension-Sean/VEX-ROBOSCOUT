@@ -26,10 +26,9 @@ jobs:
       - run: npm ci
       - name: Export web build
         env:
-          # Bundled into the client at build time. NOTE: this site is public,
-          # so this token is extractable from the shipped JS. Use a token you
-          # are comfortable exposing and can rotate.
-          EXPO_PUBLIC_VEX_API_TOKEN: ${{ secrets.EXPO_PUBLIC_VEX_API_TOKEN }}
+          # Proxy URL is public (just the endpoint); the token lives in the
+          # Worker, not the bundle. Set it as a repo VARIABLE.
+          EXPO_PUBLIC_VEX_PROXY_URL: ${{ vars.EXPO_PUBLIC_VEX_PROXY_URL }}
         run: npx expo export --platform web
       - name: SPA fallback + disable Jekyll
         run: |
