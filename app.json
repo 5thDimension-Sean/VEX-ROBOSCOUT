@@ -1,13 +1,24 @@
 {
   "expo": {
-    "name": "VEX-ROBOTSCOUT",
+    "name": "VEX robotScout",
     "slug": "VEX-ROBOTSCOUT",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "VEX robotScout uses your location to sort nearby events by distance."
+        }
+      ]
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "VEX robotScout uses your location to sort nearby events by distance."
+      }
     },
     "android": {
       "adaptiveIcon": {
