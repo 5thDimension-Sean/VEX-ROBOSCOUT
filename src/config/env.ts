@@ -16,14 +16,27 @@
  * EXPO_PUBLIC_VEX_PROGRAM_ID — the Settings screen can also list programs.
  */
 
+import { Platform } from 'react-native';
+
 export const VEX_API_BASE = 'https://events.vex.com/api/v2';
+
+/**
+ * Deployed token proxy (Cloudflare Worker). This URL is public and non-secret —
+ * the VEX Bearer token lives inside the Worker, never in this bundle. The web
+ * build defaults to it so the hosted site works with no CI config; native/local
+ * dev defaults to direct mode. Override either with EXPO_PUBLIC_VEX_PROXY_URL.
+ */
+const DEFAULT_PROXY_URL =
+  Platform.OS === 'web'
+    ? 'https://vex-robotscout-proxy.5thdimension-sean.workers.dev'
+    : '';
 
 /** Default program: V5RC (formerly VRC). Override via env if needed. */
 export const DEFAULT_PROGRAM_ID = 1;
 
 export const config = {
   apiBase: VEX_API_BASE,
-  proxyUrl: process.env.EXPO_PUBLIC_VEX_PROXY_URL ?? '',
+  proxyUrl: process.env.EXPO_PUBLIC_VEX_PROXY_URL || DEFAULT_PROXY_URL,
   token: process.env.EXPO_PUBLIC_VEX_API_TOKEN ?? '',
   programId: process.env.EXPO_PUBLIC_VEX_PROGRAM_ID
     ? Number(process.env.EXPO_PUBLIC_VEX_PROGRAM_ID)
